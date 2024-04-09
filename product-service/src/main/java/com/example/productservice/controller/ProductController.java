@@ -4,7 +4,6 @@ package com.example.productservice.controller;
 import com.example.productservice.dto.ProductDto;
 import com.example.productservice.model.Product;
 import com.example.productservice.service.ProductService;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class ProductController {
 
     @PostMapping("/add")
     @ResponseBody
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+    public ResponseEntity<?> createProduct(@RequestBody ProductDto productDto) {
         Product productRequest = modelMapper.map(productDto, Product.class);
         Product product = productService.createProduct(productRequest);
         ProductDto productResponse = modelMapper.map(product, ProductDto.class);

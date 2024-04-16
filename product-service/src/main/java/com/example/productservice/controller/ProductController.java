@@ -22,6 +22,10 @@ public class ProductController {
     @Autowired
     private ModelMapper modelMapper;
 
+    @GetMapping("/hello")
+    public String hello(){
+        return "hello products";
+    }
     @GetMapping
     public List<ProductDto> findAll() {
         return productService.findAll().stream().map(product -> modelMapper.map(product, ProductDto.class)).collect(Collectors.toList());

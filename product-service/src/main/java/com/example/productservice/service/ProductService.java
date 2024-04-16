@@ -32,7 +32,7 @@ public class ProductService {
     }
 
     public void deleteById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("There is no product with " + id + " id"));
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product with " + id + " id is not exist"));
         productRepository.delete(product);
     }
 }

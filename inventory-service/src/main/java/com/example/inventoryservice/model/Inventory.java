@@ -1,4 +1,5 @@
-package com.example.orderservice.model;
+package com.example.inventoryservice.model;
+
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,11 +7,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "order_item")
+@Table(name = "inventory")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItem {
+public class Inventory {
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,15 +22,5 @@ public class OrderItem {
 
     private Integer quantity;
 
-    private Double price;
 
-    @ManyToOne
-    @Transient
-    private Order order;
-
-    public OrderItem(String code, Integer quantity, Double price) {
-        this.setCode(code);
-        this.setQuantity(quantity);
-        this.setPrice(price);
-    }
 }

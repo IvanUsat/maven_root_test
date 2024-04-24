@@ -15,18 +15,14 @@ import lombok.NonNull;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id", nullable = false, unique = true)
+    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
     @Column
-    private String name;
+    private String code;
 
     @Column
     @NonNull
     private Long price;
-
-    @Column
-    private Boolean isAvailable;
-
 
 }

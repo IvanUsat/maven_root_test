@@ -5,7 +5,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 public class ProductDto {
-    private String name;
+    private String code;
     private Long price;
-    private Boolean isAvailable;
+
 }

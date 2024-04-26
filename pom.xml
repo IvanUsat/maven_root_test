@@ -1,9 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>16</source>
+          <target>16</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <version>3.2.5</version>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
   <groupId>ru.ivanusatski</groupId>
   <artifactId>maven_root_test</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>maven_root_test</name>
+  <modules>
+    <module>product-service</module>
+    <module>order-service</module>
+    <module>inventory-service</module>
+    <module>discovery-service</module>
+    <module>user-service</module>
+  </modules>
 </project>

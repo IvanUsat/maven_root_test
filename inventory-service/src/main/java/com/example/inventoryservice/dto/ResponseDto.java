@@ -1,7 +1,6 @@
 package com.example.inventoryservice.dto;
 
 import com.example.inventoryservice.model.Inventory;
-import jakarta.persistence.Access;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

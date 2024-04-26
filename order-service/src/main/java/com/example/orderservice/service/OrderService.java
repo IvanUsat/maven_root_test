@@ -22,7 +22,7 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 
 
     public Order createOrder(Order order) {
@@ -37,8 +37,8 @@ public class OrderService {
                 .map(OrderItem::getQuantity)
                 .toList();
 
-        InventoryResponse[] inventoryResponses = webClient.get()
-                .uri("http://localhost:8089/inventory",
+        InventoryResponse[] inventoryResponses = webClientBuilder.build().get()
+                .uri("http://inventory-service/inventory",
                         uriBuilder -> uriBuilder
                                 .queryParam("code", codes)
                                 .queryParam("quantity", quantity)

@@ -6,6 +6,7 @@ import com.example.inventoryservice.dto.ResponseDto;
 import com.example.inventoryservice.model.Inventory;
 import com.example.inventoryservice.repository.InventoryRepository;
 import jakarta.transaction.Transactional;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,12 +18,11 @@ import java.util.NoSuchElementException;
 @Transactional
 public class InventoryService {
 
-
     @Autowired
     private InventoryRepository repository;
 
     @Autowired
-    private WebClient webClient;
+    private WebClient.Builder webClientBuilder;
 
     public Inventory addInventory(Inventory inventory) {
         return repository.save(inventory);
@@ -31,8 +31,8 @@ public class InventoryService {
 
     public ResponseDto findById(Long id) {
         Inventory inventory = repository.findById(id).get();
-        ProductResponse productResponse = webClient.get()
-                .uri("http://localhost:8088/products/code/" + inventory.getCode())
+        ProductResponse productResponse = webClientBuilder.build().get()
+                .uri("http://product-service/products/code/" + inventory.getCode())
                 .retrieve()
                 .bodyToMono(ProductResponse.class)
                 .block();
@@ -68,6 +68,7 @@ public class InventoryService {
     }
 
     public void deleteInventory(Long id) {
-        repository.deleteById(id);
+        Inventory inventory = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Inventory with " + id + " id is not exist"));
+        repository.delete(inventory);
     }
 }

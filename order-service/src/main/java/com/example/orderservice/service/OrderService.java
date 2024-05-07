@@ -20,8 +20,13 @@ import java.util.Optional;
 public class OrderService {
 
     @Autowired
-    private OrderRepository orderRepository;
+    public void setWebClientBuilder(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
+
     @Autowired
+    private OrderRepository orderRepository;
+
     private WebClient.Builder webClientBuilder;
 
 
@@ -74,7 +79,7 @@ public class OrderService {
     }
 
     public Order findOrderById(Long id) {
-        Optional<Order> result = Optional.ofNullable(orderRepository.findOrderById(id));
+        Optional<Order> result = orderRepository.findById(id);
         if (result.isPresent()) {
             return result.get();
         } else {
@@ -84,7 +89,8 @@ public class OrderService {
 
 
     public void deleteOrder(Long id) {
-        orderRepository.deleteById(id);
+        Order order = orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order with " + id + " id is not exist"));
+        orderRepository.delete(order);
     }
 
 }

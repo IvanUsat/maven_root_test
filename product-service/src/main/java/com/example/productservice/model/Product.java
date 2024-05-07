@@ -1,10 +1,7 @@
 package com.example.productservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 
 @Data
@@ -12,6 +9,7 @@ import lombok.NonNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "products")
+@Builder
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

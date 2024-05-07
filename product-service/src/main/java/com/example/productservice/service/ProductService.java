@@ -24,12 +24,16 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
     public Optional<Product> findProductById(Long id) {
-        return productRepository.findProductById(id);
+        return productRepository.findById(id);
     }
 
     public Product findProductByCode(String code) {
@@ -39,11 +43,6 @@ public class ProductService {
         } else {
             throw new ResourceNotFoundException("Product with code " + code + " has not found");
         }
-    }
-
-
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
     }
 
     public void deleteById(Long id) {

@@ -4,7 +4,6 @@ package com.example.productservice.controller;
 import com.example.productservice.dto.ProductDto;
 import com.example.productservice.model.Product;
 import com.example.productservice.service.ProductService;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

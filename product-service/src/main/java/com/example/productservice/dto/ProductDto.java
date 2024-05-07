@@ -1,11 +1,15 @@
 package com.example.productservice.dto;
 
-import lombok.*;
+import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
-@NoArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductDto {
     private String code;
     private Long price;
-
 }

@@ -25,6 +25,7 @@
   <packaging>pom</packaging>
   <name>maven_root_test</name>
   <modules>
+    <module>gateway-service</module>
     <module>product-service</module>
     <module>order-service</module>
     <module>inventory-service</module>

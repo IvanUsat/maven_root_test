@@ -1,0 +1,120 @@
+version: '3.8'
+services:
+  postgres-order:
+    container_name: postgres-order
+    image: postgres:15
+    environment:
+      POSTGRES_DB: order-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5431:5432"
+  postgres-inventory:
+    container_name: postgres-inventory
+    image: postgres:15
+    environment:
+      POSTGRES_DB: inventory-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+  postgres-product:
+    container_name: postgres-product
+    image: postgres:15
+    environment:
+      POSTGRES_DB: product-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+  keycloakdb:
+    container_name: postgresdb
+    image: postgres:15
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.3
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
+    ports:
+      - "8484:8080"
+    volumes:
+        - ./realms/:/opt/keycloak/data/import/
+    command:
+      - start-dev --import-realm
+    depends_on:
+      - keycloakdb
+
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: discovery-service
+      dockerfile: Dockerfile
+    image: discovery-service:latest
+    ports:
+      - "8079:8079"
+
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: gateway-service
+      dockerfile: Dockerfile
+    image: gateway-service:latest
+    ports:
+      - "8096:8096"
+    depends_on:
+      - discovery-service
+      - keycloak
+
+  inventory-service:
+    container_name: inventory-service
+    build:
+      context: inventory-service
+      dockerfile: Dockerfile
+    image: inventory-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
+    ports:
+      - "8189:8189"
+    depends_on:
+      - discovery-service
+      - postgres-inventory
+      - gateway-service
+
+  order-service:
+    container_name: order-service
+    build:
+      context: order-service
+      dockerfile: Dockerfile
+    image: order-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+    ports:
+      - "8090:8190"
+    depends_on:
+      - discovery-service
+      - postgres-order
+      - gateway-service
+
+  product-service:
+    container_name: product-service
+    build:
+      context: product-service
+      dockerfile: Dockerfile
+    image: product-service:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-product:5433/product-service
+    ports:
+      - "8088:8188"
+    depends_on:
+      - discovery-service
+      - postgres-product
+      - gateway-service

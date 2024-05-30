@@ -506,40 +506,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
-  "users": [
-    {
-      "username": "antoniv",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "Anton",
-      "lastName": "Ivanov ",
-      "email": "antoniv@ex.com",
-      "credentials": [
-        {
-          "type": "password"
-        }
-      ],
-      "realmRoles": [
-        "ROLE_ADMIN"
-      ]
-    },
-    {
-      "username": "b.button",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "Benjamin",
-      "lastName": "Button",
-      "email": "b.button@ex.com",
-      "credentials": [
-        {
-          "type": "password"
-        }
-      ],
-      "realmRoles": [
-        "ROLE_USER"
-      ]
-    }
-  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -2299,11 +2265,3 @@
     "policies": []
   }
 }
-
-
-
-
-
-
-
-

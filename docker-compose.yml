@@ -1,32 +1,39 @@
 version: '3.8'
 services:
-  postgres-order:
-    container_name: postgres-order
-    image: postgres:15
-    environment:
-      POSTGRES_DB: order-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-    ports:
-      - "5431:5432"
+
   postgres-inventory:
     container_name: postgres-inventory
     image: postgres:15
-    environment:
-      POSTGRES_DB: inventory-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+#    volumes:
+#      - ./inventory-service/docker/volumes/postgres-inventory/data:/var/lib/postgresql/data
+    env_file:
+      - ./inventory-service/docker/environments/.env
     ports:
       - "5432:5432"
+    restart: always
+
+  postgres-order:
+    container_name: postgres-order
+    image: postgres:15
+#    volumes:
+#      - ./order-service/docker/volumes/postgres-order/data:/var/lib/postgresql/data
+    env_file:
+      - ./order-service/docker/environments/.env
+    ports:
+      - "5433:5432"
+#    restart: always
+
   postgres-product:
     container_name: postgres-product
     image: postgres:15
-    environment:
-      POSTGRES_DB: product-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+#    volumes:
+#      - ./product-service/docker/volumes/postgres-product/data:/var/lib/postgresql/data
+    env_file:
+      - ./product-service/docker/environments/.env
     ports:
-      - "5433:5432"
+      - "5431:5432"
+#    restart: always
+
   keycloakdb:
     container_name: postgresdb
     image: postgres:15
@@ -42,16 +49,17 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloakdb:5432/keycloak
-      KC_DB_USERNAME: admin
-      KC_DB_PASSWORD: admin
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: root
     ports:
       - "8484:8080"
     volumes:
         - ./realms/:/opt/keycloak/data/import/
     command:
-      - start-dev --import-realm
+      ["start-dev", "--import-realm"]
     depends_on:
       - keycloakdb
+    restart: always
 
   discovery-service:
     container_name: discovery-service
@@ -61,6 +69,7 @@ services:
     image: discovery-service:latest
     ports:
       - "8079:8079"
+    restart: always
 
   gateway-service:
     container_name: gateway-service
@@ -68,53 +77,63 @@ services:
       context: gateway-service
       dockerfile: Dockerfile
     image: gateway-service:latest
+    environment:
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI=http://keycloak:8484/realms/myclients
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8079/eureka
     ports:
-      - "8096:8096"
+      - "8096:8079"
     depends_on:
       - discovery-service
       - keycloak
+    restart: always
 
   inventory-service:
     container_name: inventory-service
     build:
       context: inventory-service
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     image: inventory-service:latest
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8079/eureka
     ports:
-      - "8189:8189"
+      - "8189:8079"
     depends_on:
       - discovery-service
       - postgres-inventory
       - gateway-service
+#    restart: always
 
   order-service:
     container_name: order-service
     build:
       context: order-service
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     image: order-service:latest
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5432/order-service
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8079/eureka
     ports:
-      - "8090:8190"
+      - "8090:8079"
     depends_on:
       - discovery-service
       - postgres-order
       - gateway-service
+    restart: always
 
   product-service:
     container_name: product-service
     build:
       context: product-service
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     image: product-service:latest
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-product:5433/product-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-product:5432/product-service
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8079/eureka
     ports:
-      - "8088:8188"
+      - "8088:8079"
     depends_on:
       - discovery-service
       - postgres-product
       - gateway-service
+    restart: always
